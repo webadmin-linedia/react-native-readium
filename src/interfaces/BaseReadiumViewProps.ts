@@ -15,4 +15,5 @@ export type BaseReadiumViewProps = {
   ref?: any;
   height?: number;
   width?: number;
+  requestConfig?: RequestInit;
 };

@@ -9,32 +9,27 @@ import {
   useLocationObserver,
 } from '../../web/hooks';
 
-export const ReadiumView = React.forwardRef<
-  {
-    nextPage: () => void;
-    prevPage: () => void;
-  },
-  ReadiumProps
->(
-  (
-    {
-      file,
-      settings,
-      location,
-      onLocationChange,
-      onTableOfContents,
-      style = {},
-      height,
-      width,
-    },
-    ref
-  ) => {
-    const readerRef = useReaderRef({
-      file,
-      onLocationChange,
-      onTableOfContents,
-    });
-    const reader = readerRef.current;
+export const ReadiumView = React.forwardRef<{
+  nextPage: () => void;
+  prevPage: () => void;
+}, ReadiumProps>(({
+  file,
+  settings,
+  location,
+  onLocationChange,
+  onTableOfContents,
+  style = {},
+  height,
+  width,
+  requestConfig,
+}, ref) => {
+  const readerRef = useReaderRef({
+    file,
+    onLocationChange,
+    onTableOfContents,
+    requestConfig,
+  });
+  const reader = readerRef.current;
 
     useImperativeHandle(ref, () => ({
       nextPage: () => {
@@ -56,19 +51,22 @@ export const ReadiumView = React.forwardRef<
     if (height) mainStyle.height = height;
     if (width) mainStyle.width = width;
 
-    return (
-      <View style={styles.container}>
-        {!reader && <div style={loaderStyle}>Loading reader...</div>}
-        <div id="D2Reader-Container" style={styles.d2Container}>
-          <main style={mainStyle} tabIndex={-1} id="iframe-wrapper">
-            <div id="reader-loading" className="loading" style={loaderStyle} />
-            <div id="reader-error" className="error" />
-          </main>
-        </div>
-      </View>
-    );
-  }
-);
+  return (
+    <View style={styles.container}>
+      {!reader && <div style={loaderStyle}>Chargement du lecteur...</div>}
+      <div id="D2Reader-Container" style={styles.d2Container}>
+        <main
+          style={mainStyle}
+          tabIndex={-1}
+          id="iframe-wrapper"
+        >
+          <div id="reader-loading" className="loading" style={loaderStyle}></div>
+          <div id="reader-error" className="error"></div>
+        </main>
+      </div>
+    </View>
+  );
+});
 
 const loaderStyle: React.CSSProperties = {
   width: '100%',
