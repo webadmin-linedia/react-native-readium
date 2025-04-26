@@ -21,11 +21,13 @@ export const ReadiumView = React.forwardRef<{
   style = {},
   height,
   width,
+  requestConfig,
 }, ref) => {
   const readerRef = useReaderRef({
     file,
     onLocationChange,
     onTableOfContents,
+    requestConfig,
   });
   const reader = readerRef.current;
 
@@ -51,7 +53,7 @@ export const ReadiumView = React.forwardRef<{
 
   return (
     <View style={styles.container}>
-      {!reader && <div style={loaderStyle}>Loading reader...</div>}
+      {!reader && <div style={loaderStyle}>Chargement du lecteur...</div>}
       <div id="D2Reader-Container" style={styles.d2Container}>
         <main
           style={mainStyle}

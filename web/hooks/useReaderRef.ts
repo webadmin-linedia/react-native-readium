@@ -7,7 +7,8 @@ export const useReaderRef = ({
   file,
   onLocationChange,
   onTableOfContents,
-}: Pick<ReadiumProps, 'file' | 'onLocationChange' | 'onTableOfContents' >) => {
+  requestConfig
+}: Pick<ReadiumProps, 'file' | 'onLocationChange' | 'onTableOfContents' | 'requestConfig' >) => {
   const readerRef = useRef<D2Reader | null>(null);
   const readingOrder = useRef<Locator[]>([]);
 
@@ -44,6 +45,7 @@ export const useReaderRef = ({
   useEffect(() => {
     async function run() {
       const D2Reader = await import('@d-i-t-a/reader');
+      console.log('react-native-readium: requestConfig', requestConfig);
       const ref = await D2Reader.load({
         url: new URL(file.url),
         lastReadingPosition: file.initialLocation,
@@ -55,6 +57,7 @@ export const useReaderRef = ({
           },
         },
         injectables: injectables,
+        requestConfig: requestConfig,
       });
 
       if (onTableOfContents) {
@@ -93,17 +96,17 @@ export const useReaderRef = ({
 const injectables: any[] = [
   {
     type: "style",
-    url: "https://cdn.statically.io/gh/d-i-t-a/R2D2BC/production/viewer/readium-css/ReadiumCSS-before.css",
+    url: "https://app.7pouces.fr/readium-css/ReadiumCSS-before.css",
     r2before: true,
   },
   {
     type: "style",
-    url: "https://cdn.statically.io/gh/d-i-t-a/R2D2BC/production/viewer/readium-css/ReadiumCSS-default.css",
+    url: "https://app.7pouces.fr/readium-css/ReadiumCSS-default.css",
     r2default: true,
   },
   {
     type: "style",
-    url: "https://cdn.statically.io/gh/d-i-t-a/R2D2BC/production/viewer/readium-css/ReadiumCSS-after.css",
+    url: "https://app.7pouces.fr/readium-css/ReadiumCSS-after.css",
     r2after: true,
   },
 ];
