@@ -2,34 +2,45 @@ import React, { useImperativeHandle } from 'react';
 import type { CSSProperties } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import type { ReadiumProps } from '../components/ReadiumView';
+import type { BaseReadiumViewProps, Preferences } from '../interfaces';
 import {
   useReaderRef,
   useSettingsObserver,
   useLocationObserver,
 } from '../../web/hooks';
 
-export const ReadiumView = React.forwardRef<{
-  nextPage: () => void;
-  prevPage: () => void;
-}, ReadiumProps>(({
-  file,
-  settings,
-  location,
-  onLocationChange,
-  onTableOfContents,
-  style = {},
-  height,
-  width,
-  requestConfig,
-}, ref) => {
-  const readerRef = useReaderRef({
-    file,
-    onLocationChange,
-    onTableOfContents,
-    requestConfig,
-  });
-  const reader = readerRef.current;
+export type ReadiumProps = Omit<BaseReadiumViewProps, 'preferences'> & {
+  preferences: Preferences;
+};
+
+export const ReadiumView = React.forwardRef<
+  {
+    nextPage: () => void;
+    prevPage: () => void;
+  },
+  ReadiumProps
+>(
+  (
+    {
+      file,
+      preferences,
+      location,
+      onLocationChange,
+      onTableOfContents,
+      style = {},
+      height,
+      width,
+      requestConfig,
+    },
+    ref
+  ) => {
+    const readerRef = useReaderRef({
+      file,
+      onLocationChange,
+      onTableOfContents,
+      requestConfig,
+    });
+    const reader = readerRef.current;
 
     useImperativeHandle(ref, () => ({
       nextPage: () => {
@@ -40,7 +51,7 @@ export const ReadiumView = React.forwardRef<{
       },
     }));
 
-    useSettingsObserver(reader, settings);
+    useSettingsObserver(reader, preferences);
     useLocationObserver(reader, location);
 
     const mainStyle = {

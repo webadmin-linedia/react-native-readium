@@ -7,13 +7,11 @@ import UIKit
 final class ReaderService: Loggable {
   var app: AppModule?
   var streamer = Streamer()
-  var publicationServer: PublicationServer?
   private var subscriptions = Set<AnyCancellable>()
 
   init() {
     do {
       self.app = try AppModule()
-      self.publicationServer = PublicationServer()
     } catch {
       print("TODO: An error occurred instantiating the ReaderService")
       print(error)
@@ -29,11 +27,13 @@ final class ReaderService: Loggable {
     }
 
     let hasLocations = location?["locations"] != nil
+    let hasType = (location?["type"] as? String)?.isEmpty == false
     let hasChildren = location?["children"] != nil
-    let hasHashHref = (location!["href"] as! String).contains("#")
+    let hasHashHref = (location?["href"] as? String)?.contains("#") == true
+    let hasTemplated = location?["templated"] != nil
 
     // check that we're not dealing with a Link
-    if ((hasChildren || hasHashHref) && !hasLocations) {
+    if ((!hasType || hasChildren || hasHashHref || hasTemplated) && !hasLocations) {
       guard let publication = publication else {
         return nil
       }
@@ -65,7 +65,6 @@ final class ReaderService: Loggable {
           print(">>>>>>>>>>> TODO: handle me", error)
         },
         receiveValue: { pub in
-          self.preparePresentation(of: pub)
           let locator: Locator? = ReaderService.locatorFromLocation(location, pub)
           let vc = reader.getViewController(
             for: pub,
@@ -138,19 +137,5 @@ final class ReaderService: Loggable {
       }
     }
     return .just(publication)
-  }
-
-  private func preparePresentation(of publication: Publication) {
-    if (self.publicationServer == nil) {
-      log(.error, "Whoops")
-      return
-    }
-
-    publicationServer?.removeAll()
-    do {
-      try publicationServer?.add(publication)
-    } catch {
-      log(.error, error)
-    }
   }
 }
