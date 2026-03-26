@@ -1,15 +1,37 @@
 import { Fetcher, HttpFetcher, Link, Manifest } from '@readium/shared';
 import { normalizeManifest } from './manifestNormalizer';
 
+type FetchImplementation = (
+  input: RequestInfo | URL,
+  init?: RequestInit
+) => Promise<Response>;
+
 /**
  * Fetches and deserializes the publication manifest
  */
-export async function fetchManifest(publicationURL: string): Promise<{
+export async function fetchManifest(
+  publicationURL: string,
+  requestConfig?: RequestInit
+): Promise<{
   manifest: Manifest;
   fetcher: Fetcher;
 }> {
   const manifestLink = new Link({ href: 'manifest.json' });
-  const fetcher: Fetcher = new HttpFetcher(undefined, publicationURL);
+
+  let fetchClient: FetchImplementation | undefined;
+  if (requestConfig) {
+    fetchClient = (input, init) =>
+      fetch(input, {
+        ...requestConfig,
+        ...init,
+        headers: {
+          ...(requestConfig.headers as Record<string, string> | undefined),
+          ...(init?.headers as Record<string, string> | undefined),
+        },
+      });
+  }
+
+  const fetcher: Fetcher = new HttpFetcher(fetchClient, publicationURL);
   const fetched = fetcher.get(manifestLink);
   const selfLink = (await fetched.link()).toURL(publicationURL)!;
 

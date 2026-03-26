@@ -21,6 +21,7 @@ interface RefProps
   > {
   container: HTMLElement | null;
   onPositionChange?: (position: number | null) => void;
+  requestConfig?: RequestInit;
 }
 
 export const useNavigator = ({
@@ -29,6 +30,7 @@ export const useNavigator = ({
   onPublicationReady,
   container,
   onPositionChange,
+  requestConfig,
 }: RefProps) => {
   const [navigator, setNavigator] = useState<EpubNavigator | null>(null);
   const navigatorRef = useRef<EpubNavigator | null>(null);
@@ -92,7 +94,7 @@ export const useNavigator = ({
       const publicationURL = normalizePublicationURL(file.url);
 
       // 2. Fetch and deserialize the manifest
-      const { manifest, fetcher } = await fetchManifest(publicationURL);
+      const { manifest, fetcher } = await fetchManifest(publicationURL, requestConfig);
       if (cancelled) return;
 
       // 3. Create the publication

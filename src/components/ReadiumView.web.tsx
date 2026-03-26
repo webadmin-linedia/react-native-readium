@@ -13,6 +13,7 @@ import type { ReadiumProps as BaseReadiumProps, ReadiumViewRef as BaseReadiumVie
 export type ReadiumProps = BaseReadiumProps & {
   height?: number;
   width?: number;
+  requestConfig?: RequestInit;
 };
 
 export type ReadiumViewRef = BaseReadiumViewRef & {
@@ -34,6 +35,7 @@ export const ReadiumView = React.forwardRef<ReadiumViewRef, ReadiumProps>(
       style = {},
       height,
       width,
+      requestConfig,
     },
     ref
   ) => {
@@ -51,6 +53,7 @@ export const ReadiumView = React.forwardRef<ReadiumViewRef, ReadiumProps>(
       onPublicationReady,
       container,
       onPositionChange: setCurrentPosition,
+      requestConfig,
     });
 
     useImperativeHandle(
@@ -176,7 +179,7 @@ export const ReadiumView = React.forwardRef<ReadiumViewRef, ReadiumProps>(
           }
         `}
         </style>
-        {!navigator && <div style={loaderStyle}>Loading reader...</div>}
+        {!navigator && <div style={loaderStyle}>Chargement du lecteur...</div>}
         <main
           ref={setContainer}
           style={styles.readiumContainer}
