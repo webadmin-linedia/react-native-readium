@@ -36,7 +36,7 @@
     "lint:fix": "eslint ./src ./apps/*/src --fix",
     "prettier": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "prettier:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "prepare": "rimraf lib && tsc",
+    "prepareclean": "rimraf lib && tsc",
     "release": "release-it",
     "example": "yarn workspace example-native",
     "example:nextjs": "yarn workspace example-nextjs",
