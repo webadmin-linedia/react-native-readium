@@ -5,8 +5,9 @@ interface RefProps extends Pick<ReadiumProps, 'file' | 'onLocationChange' | 'onP
     container: HTMLElement | null;
     onPositionChange?: (position: number | null) => void;
     requestConfig?: RequestInit;
+    allowedDomains?: string[];
 }
-export declare const useNavigator: ({ file, onLocationChange, onPublicationReady, container, onPositionChange, requestConfig, }: RefProps) => {
+export declare const useNavigator: ({ file, onLocationChange, onPublicationReady, container, onPositionChange, requestConfig, allowedDomains, }: RefProps) => {
     navigator: EpubNavigator | null;
     positions: Locator[];
 };

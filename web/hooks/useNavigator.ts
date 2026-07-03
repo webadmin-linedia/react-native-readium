@@ -22,6 +22,7 @@ interface RefProps
   container: HTMLElement | null;
   onPositionChange?: (position: number | null) => void;
   requestConfig?: RequestInit;
+  allowedDomains?: string[];
 }
 
 export const useNavigator = ({
@@ -31,6 +32,7 @@ export const useNavigator = ({
   container,
   onPositionChange,
   requestConfig,
+  allowedDomains,
 }: RefProps) => {
   const [navigator, setNavigator] = useState<EpubNavigator | null>(null);
   const navigatorRef = useRef<EpubNavigator | null>(null);
@@ -131,9 +133,14 @@ export const useNavigator = ({
       );
 
       // 7. Initialize and load the navigator
+      // `injectables.allowedDomains` widens the per-resource CSP the navigator
+      // generates (see FrameBlobBuilder) beyond the manifest's own base URL,
+      // for setups where linked resources (CSS, images) live under a
+      // different host/bucket than the manifest itself.
       const configuration = {
         preferences: { scroll: false },
         defaults: {},
+        injectables: { rules: [], allowedDomains: allowedDomains || [] },
       };
 
       const nav = new EpubNavigator(

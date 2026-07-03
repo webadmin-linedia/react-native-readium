@@ -14,6 +14,12 @@ export type ReadiumProps = BaseReadiumProps & {
   height?: number;
   width?: number;
   requestConfig?: RequestInit;
+  /**
+   * Additional origins/URL prefixes to allow in the per-resource CSP the
+   * navigator generates, for publications whose linked resources (CSS,
+   * images...) are served from a different host or path than the manifest.
+   */
+  allowedDomains?: string[];
 };
 
 export type ReadiumViewRef = BaseReadiumViewRef & {
@@ -36,6 +42,7 @@ export const ReadiumView = React.forwardRef<ReadiumViewRef, ReadiumProps>(
       height,
       width,
       requestConfig,
+      allowedDomains,
     },
     ref
   ) => {
@@ -54,6 +61,7 @@ export const ReadiumView = React.forwardRef<ReadiumViewRef, ReadiumProps>(
       container,
       onPositionChange: setCurrentPosition,
       requestConfig,
+      allowedDomains,
     });
 
     useImperativeHandle(
